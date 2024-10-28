@@ -17,18 +17,17 @@ class PrinterI(Example.Printer):
 
 class Server(Ice.Application):
     def run(self, argv):
-        broker = self.communicator()
+        ic = self.communicator()
         servant = PrinterI()
 
-        adapter = broker.createObjectAdapter("PrinterAdapter")
-        proxy = adapter.add(servant, broker.stringToIdentity("printer1"))
+        adapter = ic.createObjectAdapter("PrinterAdapter")
+        proxy = adapter.add(servant, ic.stringToIdentity("printer1"))
 
         print(proxy, flush=True)
-        print(f'ZeroC Ice version: {Ice.stringVersion()}', flush=True)
 
         adapter.activate()
         self.shutdownOnInterrupt()
-        broker.waitForShutdown()
+        ic.waitForShutdown()
 
         return 0
 
