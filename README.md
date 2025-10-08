@@ -1,2 +1,2 @@
 # hello.ice
-Repositorio de ejemplos de ZeroC Ice, con Python
+ZeroC Ice + Python examples repository for the Distributed Systems subject
