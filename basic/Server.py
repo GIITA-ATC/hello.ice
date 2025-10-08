@@ -15,22 +15,20 @@ class PrinterI(Example.Printer):
         self.n += 1
 
 
-class Server(Ice.Application):
-    def run(self, argv):
-        ic = self.communicator()
-        servant = PrinterI()
+def main(ic):
+    servant = PrinterI()
+    adapter = ic.createObjectAdapter("PrinterAdapter")
+    proxy = adapter.add(servant, ic.stringToIdentity("printer1"))
 
-        adapter = ic.createObjectAdapter("PrinterAdapter")
-        proxy = adapter.add(servant, ic.stringToIdentity("printer1"))
+    print(proxy)
 
-        print(proxy, flush=True)
-
-        adapter.activate()
-        self.shutdownOnInterrupt()
-        ic.waitForShutdown()
-
-        return 0
+    adapter.activate()
+    ic.waitForShutdown()
 
 
-server = Server()
-sys.exit(server.main(sys.argv))
+if __name__ == "__main__":
+    try:
+        with Ice.initialize(sys.argv[1]) as communicator:
+            main(communicator)
+    except KeyboardInterrupt:
+        pass
