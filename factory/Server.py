@@ -4,6 +4,7 @@ import sys
 import Ice
 Ice.loadSlice('PrinterFactory.ice')
 import Example
+import time
 
 
 class PrinterI(Example.Printer):
@@ -12,6 +13,7 @@ class PrinterI(Example.Printer):
 
     def write(self, message, current):
         print(f'{self.name} says: {message}', flush=True)
+        time.sleep(10)
 
     def destroy(self, current):
         current.adapter.remove(current.id)
@@ -25,22 +27,20 @@ class PrinterFactoryI(Example.PrinterFactory):
         return Example.PrinterPrx.checkedCast(proxy)
 
 
-class Server(Ice.Application):
-    def run(self, argv):
-        ic = self.communicator()
-        servant = PrinterFactoryI()
+def main(ic):
+    factory = PrinterFactoryI()
+    adapter = ic.createObjectAdapter("PrinterFactoryAdapter")
+    proxy = adapter.add(factory, ic.stringToIdentity("PF1"))
 
-        adapter = ic.createObjectAdapter("PrinterFactoryAdapter")
-        proxy = adapter.add(servant, ic.stringToIdentity("PF1"))
+    print(proxy, flush=True)
 
-        print(proxy, flush=True)
-
-        adapter.activate()
-        self.shutdownOnInterrupt()
-        ic.waitForShutdown()
-
-        return 0
+    adapter.activate()
+    ic.waitForShutdown()
 
 
-server = Server()
-sys.exit(server.main(sys.argv))
+if __name__ == "__main__":
+    try:
+        with Ice.initialize(sys.argv[1]) as communicator:
+            main(communicator)
+    except KeyboardInterrupt:
+        pass

@@ -7,19 +7,18 @@ Ice.loadSlice('-I. --all PrinterFactory.ice')
 import Example
 
 
-class Client(Ice.Application):
-    def run(self, argv):
-        proxy = self.communicator().stringToProxy(argv[1])
-        factory = Example.PrinterFactoryPrx.checkedCast(proxy)
+def main(ic):
+    proxy = ic.stringToProxy(sys.argv[1])
+    factory = Example.PrinterFactoryPrx.checkedCast(proxy)
 
-        if not factory:
-            raise RuntimeError('Invalid proxy')
+    if not factory:
+        raise RuntimeError('Invalid proxy')
 
-        printer = factory.create("Printer1")
-        printer.write('Hello World!')
-        printer.destroy()
-
-        return 0
+    printer = factory.create("Printer1")
+    printer.write('Hello World!')
+    printer.destroy()
 
 
-sys.exit(Client().main(sys.argv))
+if __name__ == "__main__":
+    with Ice.initialize() as communicator:
+        main(communicator)
