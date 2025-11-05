@@ -7,6 +7,9 @@ clean:
 run-server:
 	./Server.py Server.config | tee proxy.out
 
+run-server-uuid:
+	./Server-UUID.py Server.config | tee proxy.out
+
 run-client:
 	./Client.py '$(shell head -1 proxy.out)'
 
