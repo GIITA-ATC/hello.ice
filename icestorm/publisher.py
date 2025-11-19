@@ -7,10 +7,13 @@ Ice.loadSlice('./Printer.ice')
 import Example
 
 
-class Publisher(Ice.Application):
+class Publisher:
+    def __init__(self, communicator):
+        self.ic = communicator
+
     def get_topic_manager(self):
         key = 'IceStorm.TopicManager.Proxy'
-        proxy = self.communicator().propertyToProxy(key)
+        proxy = self.ic.propertyToProxy(key)
         if proxy is None:
             print("property {} not set".format(key))
             return None
@@ -18,7 +21,7 @@ class Publisher(Ice.Application):
         print("Using IceStorm in: '%s'" % proxy)
         return IceStorm.TopicManagerPrx.checkedCast(proxy)
 
-    def run(self, argv):
+    def run(self):
         topic_mgr = self.get_topic_manager()
         if not topic_mgr:
             print('Invalid proxy')
@@ -37,7 +40,10 @@ class Publisher(Ice.Application):
         for i in range(10):
             printer.write("Hello World %s!" % i)
 
-        return 0
 
-
-sys.exit(Publisher().main(sys.argv))
+if __name__ == "__main__":
+    try:
+        with Ice.initialize(sys.argv[1]) as communicator:
+            Publisher(communicator).run()
+    except KeyboardInterrupt:
+        pass

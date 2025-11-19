@@ -10,7 +10,7 @@ run-icestorm:
 	icebox --Ice.Config=icebox.config
 
 run-publisher:  icestorm.config
-	./publisher.py --Ice.Config=publisher.config
+	./publisher.py publisher.config
 
 run-subscriber: icestorm.config
-	./subscriber.py --Ice.Config=subscriber.config
+	./subscriber.py subscriber.config

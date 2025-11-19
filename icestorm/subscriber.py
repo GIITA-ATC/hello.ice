@@ -14,10 +14,13 @@ class PrinterI(Example.Printer):
         sys.stdout.flush()
 
 
-class Subscriber(Ice.Application):
+class Subscriber:
+    def __init__(self, communicator):
+        self.ic = communicator
+
     def get_topic_manager(self):
         key = 'IceStorm.TopicManager.Proxy'
-        proxy = self.communicator().propertyToProxy(key)
+        proxy = self.ic.propertyToProxy(key)
         if proxy is None:
             print("property '{}' not set".format(key))
             return None
@@ -25,15 +28,14 @@ class Subscriber(Ice.Application):
         print("Using IceStorm in: '%s'" % proxy)
         return IceStorm.TopicManagerPrx.checkedCast(proxy)
 
-    def run(self, argv):
+    def run(self):
         topic_mgr = self.get_topic_manager()
         if not topic_mgr:
             print("Invalid proxy")
             return 2
 
-        ic = self.communicator()
         servant = PrinterI()
-        adapter = ic.createObjectAdapter("PrinterAdapter")
+        adapter = self.ic.createObjectAdapter("PrinterAdapter")
         subscriber = adapter.addWithUUID(servant)
 
         topic_name = "PrinterTopic"
@@ -46,12 +48,15 @@ class Subscriber(Ice.Application):
         print("Waiting events... '{}'".format(subscriber))
 
         adapter.activate()
-        self.shutdownOnInterrupt()
-        ic.waitForShutdown()
-
+        self.ic.waitForShutdown()
         topic.unsubscribe(subscriber)
 
         return 0
 
 
-sys.exit(Subscriber().main(sys.argv))
+if __name__ == "__main__":
+    try:
+        with Ice.initialize(sys.argv[1]) as communicator:
+            Subscriber(communicator).run()
+    except KeyboardInterrupt:
+        pass
