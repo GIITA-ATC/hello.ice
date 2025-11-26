@@ -8,7 +8,7 @@ run-registry:
 	icegridregistry --Ice.Config=Registry.config
 
 run-server:
-	./Server.py --Ice.Config=Server.config | tee server-proxy.out
+	./Server.py Server.config | tee server-proxy.out
 
 run-client:
-	./Client.py --Ice.Config=Client.config '$(shell head -1 server-proxy.out)'
+	./Client.py Client.config '$(shell head -1 server-proxy.out)'
