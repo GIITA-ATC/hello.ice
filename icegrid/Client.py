@@ -7,7 +7,7 @@ import Example
 
 
 def main(ic):
-    proxy = ic.stringToProxy(sys.argv[1])
+    proxy = ic.stringToProxy(sys.argv[2])
     printer = Example.PrinterPrx.checkedCast(proxy)
 
     if not printer:
@@ -17,5 +17,5 @@ def main(ic):
 
 
 if __name__ == "__main__":
-    with Ice.initialize() as communicator:
+    with Ice.initialize(sys.argv[1]) as communicator:
         main(communicator)

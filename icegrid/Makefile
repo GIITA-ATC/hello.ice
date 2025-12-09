@@ -19,7 +19,7 @@ run-node2: data/db/node2/servers
 	icegridnode --Ice.Config=node2.config
 
 run-client:
-	./Client.py --Ice.Config=locator.config "printer1 -t -e 1.1 @ PrinterServer$(SERVER).PrinterAdapter"
+	./Client.py locator.config "printer1 -t -e 1.1 @ PrinterServer$(SERVER).PrinterAdapter"
 
 app-workspace: data/Printer
 	cp Printer.ice Server.py data/Printer

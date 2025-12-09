@@ -28,8 +28,9 @@ def main(ic):
 
 
 if __name__ == "__main__":
+    config = sys.argv[1] if len(sys.argv) > 1 else None
     try:
-        with Ice.initialize(sys.argv[1]) as communicator:
+        with Ice.initialize(config) as communicator:
             main(communicator)
     except KeyboardInterrupt:
         pass
