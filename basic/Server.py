@@ -9,6 +9,7 @@ import Example
 
 class PrinterI(Example.Printer):
     n = 0
+
     def write(self, message, current=None):
         print("{0}: {1}".format(self.n, message))
         sys.stdout.flush()
@@ -20,7 +21,7 @@ def main(ic):
     adapter = ic.createObjectAdapter("PrinterAdapter")
     proxy = adapter.add(servant, ic.stringToIdentity("printer1"))
 
-    print(proxy)
+    print(proxy, flush=True)
 
     adapter.activate()
     ic.waitForShutdown()
