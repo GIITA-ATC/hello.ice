@@ -1,0 +1,55 @@
+#!/usr/bin/env -S python3 -u
+
+import sys
+import Ice
+Ice.loadSlice('container.ice')
+import Services
+
+
+class ContainerI(Services.Container):
+    def __init__(self):
+        self.proxies = dict()
+
+    def link(self, key, proxy, current=None):
+        if key in self.proxies:
+            raise Services.AlreadyExists(key)
+
+        print("link: {0} -> {1}".format(key, proxy))
+        self.proxies[key] = proxy
+
+    def unlink(self, key, current=None):
+        if not key in self.proxies:
+            raise Services.NoSuchKey(key)
+
+        print("unlink: {0}".format(key))
+        del self.proxies[key]
+
+    def get(self, key, current=None):
+        if key not in self.proxies:
+            raise Services.NoSuchKey(key)
+
+        proxy = self.proxies[key]
+        print("get: {0} -> {1}".format(key, proxy))
+        return proxy
+
+    def list(self, current=None):
+        return self.proxies
+
+
+def main(ic):
+    servant = ContainerI()
+    adapter = ic.createObjectAdapter("ContainerAdapter")
+    proxy = adapter.add(servant, ic.stringToIdentity("container1"))
+
+    print(proxy)
+
+    adapter.activate()
+    ic.waitForShutdown()
+
+
+if __name__ == "__main__":
+    try:
+        with Ice.initialize(sys.argv[1]) as communicator:
+            main(communicator)
+    except KeyboardInterrupt:
+        pass
