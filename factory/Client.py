@@ -3,7 +3,7 @@
 
 import sys
 import Ice
-Ice.loadSlice('-I. --all PrinterFactory.ice')
+Ice.loadSlice('PrinterFactory.ice')
 import Example
 
 
