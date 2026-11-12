@@ -10,7 +10,6 @@ import Example
 
 class PrinterI(Example.Printer):
     def __init__(self, identities):
-        super().__init__()
         self.valid_identities = set(identities)
 
     def ensure_valid_object(self, identity):
